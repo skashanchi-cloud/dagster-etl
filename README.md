@@ -1,47 +1,84 @@
-# etl_project
+Dagster ETL Monorepo
 
-This is a [Dagster](https://dagster.io/) project scaffolded with [`dagster project scaffold`](https://docs.dagster.io/guides/build/projects/creating-a-new-project).
+This repository hosts multiple ETL pipelines built with Dagster
+.
+Each ETL lives under the projects/
+ directory and is managed as a modular Dagster code location.
 
-## Getting started
+The repo is structured so you can run and test pipelines locally, and then deploy them seamlessly to Dagster Cloud.
 
-First, install your Dagster code location as a Python package. By using the --editable flag, pip will install your Python package in ["editable mode"](https://pip.pypa.io/en/latest/topics/local-project-installs/#editable-installs) so that as you develop, local code changes will automatically apply.
+🚀 Getting Started
+1. Clone the repository
+git clone https://github.com/skashanchi-cloud/dagster-etl.git
+cd dagster-etl
 
-```bash
+2. Create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate   # macOS/Linux
+.venv\Scripts\activate      # Windows
+
+3. Install dependencies
 pip install -e ".[dev]"
-```
 
-Then, start the Dagster UI web server:
-
-```bash
+4. Run Dagster locally
 dagster dev
-```
 
-Open http://localhost:3000 with your browser to see the project.
 
-You can start writing assets in `etl_project/assets.py`. The assets are automatically loaded into the Dagster code location as you define them.
+Then open http://localhost:3000
+ in your browser to explore assets, jobs, and runs.
 
-## Development
+📂 Repository Structure
+dagster-etl/
+├─ projects/              # Each ETL lives here
+│   └─ test_etl/          # Example ETL project
+│      ├─ assets.py       # Asset (extract/transform/load) definitions
+│      ├─ definitions.py  # Dagster Definitions entrypoint
+│      └─ __init__.py
+├─ pyproject.toml         # Python project + Dagster config
+├─ setup.py               # Packaging config
+├─ setup.cfg              # Linting/test configs
+├─ README.md              # This file
+└─ .gitignore             # Ignore venv, caches, etc.
 
-### Adding new Python dependencies
 
-You can specify new Python dependencies in `setup.py`.
+projects/ → Container for all ETL subprojects. Add new ETLs here (e.g., sales_etl, marketing_etl).
 
-### Unit testing
+assets.py → Define extract, transform, and load logic as Dagster assets.
 
-Tests are in the `etl_project_tests` directory and you can run tests using `pytest`:
+definitions.py → Collect assets and define the Dagster Definitions object.
 
-```bash
-pytest etl_project_tests
-```
+pyproject.toml → Includes [tool.dagster] pointing to the ETL definitions.
 
-### Schedules and sensors
+🧪 Development
+Adding Dependencies
 
-If you want to enable Dagster [Schedules](https://docs.dagster.io/guides/automate/schedules/) or [Sensors](https://docs.dagster.io/guides/automate/sensors/) for your jobs, the [Dagster Daemon](https://docs.dagster.io/guides/deploy/execution/dagster-daemon) process must be running. This is done automatically when you run `dagster dev`.
+Add Python dependencies in pyproject.toml under [project.dependencies] and reinstall:
 
-Once your Dagster Daemon is running, you can start turning on schedules and sensors for your jobs.
+pip install -e .
 
-## Deploy on Dagster+
+Running Tests
 
-The easiest way to deploy your Dagster project is to use Dagster+.
+Tests for each ETL can live inside its own folder or in a central tests/ directory:
 
-Check out the [Dagster+ documentation](https://docs.dagster.io/dagster-plus/) to learn more.
+pytest
+
+☁️ Deployment to Dagster Cloud
+
+Push this repo to GitHub (already done ✅).
+
+Connect the repo to your Dagster Cloud workspace.
+
+Dagster Cloud will use the pyproject.toml [tool.dagster] block to discover code locations.
+
+Each ETL in projects/ can be materialized, scheduled, and monitored from Dagster Cloud.
+
+For more details, see Dagster Cloud deployment docs
+.
+
+🔮 Roadmap
+
+Add more ETLs under projects/
+
+Configure sensors/schedules for automation
+
+CI/CD integration with GitHub Actions for automated deploys
